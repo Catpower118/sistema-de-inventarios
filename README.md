@@ -18,8 +18,8 @@ y guardar los datos en archivo JSON para persistencia.
 
 ## Instalación
 ```bash
-git clone https://github.com/tu-usuario/tu-repositorio.git
-cd tu-repositorio
+git clone https://github.com/Catpower118/sistema-de-inventarios.git
+cd sistema-de-inventarios
 pip install -r requirements.txt
 ```
 
