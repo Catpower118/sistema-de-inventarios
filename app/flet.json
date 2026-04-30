@@ -1,0 +1,8 @@
+{
+    "assets": [
+        "assets"
+    ],
+    "app": {
+        "icon": "assets/portada_sistema.ico"
+    }
+}

@@ -6,6 +6,7 @@ def main(page: ft.Page):
     page.title = "Sistema de Inventario"
     page.bgcolor = "black"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.window.icon = "portada_sistema.ico"
     
     # titulo de bienvenida
     titulo = ft.Text("Bienvenido al sistema de inventario", color="green", size=30)
@@ -75,7 +76,7 @@ def main(page: ft.Page):
         page.add(texto_campo)
     
     # entrada de texto
-    texto_entrada = ft.Text("Elija una opcion valida del menu", color="green", size=20)
+    texto_entrada = ft.Text("Elija una opcion valida del menu:", color="green", size=20)
     entrada_opcion = ft.TextField(label="Opcion", color="green", border_color="blue", cursor_color="white", width=200)
     
     fila_entrada = ft.Row(
@@ -109,30 +110,66 @@ def main(page: ft.Page):
                     ]
                 )
                 page.show_dialog(alerta)
-            else:
-                inventario[nombre_val] = {
-                    "ID": ID_val,
-                    "Cantidad": cantidad_val,
-                    "Precio": precio_val
-                }
-                with open("inventario.json", "w") as archivo:
-                    json.dump(inventario, archivo, indent=4)
-                actualizar_tabla()    
-                
-                ID_producto.value = ""
-                nombre_producto.value = ""
-                cantidad_producto.value = ""
-                precio_producto.value = ""
-                page.update()
-                
-                page.show_dialog(ft.AlertDialog(
-                    title=ft.Text("Éxito", color="green"),
-                    content=ft.Text("Producto guardado correctamente.", color="green"),
+                return
+            elif not nombre_val.isalpha():
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("El nombre debe contener solo letras.", color="red"),
                     alignment=ft.Alignment.CENTER,
                     actions=[
                         ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
                     ]
-                ))
+                )
+                page.show_dialog(alerta)
+                return
+            if nombre_val in inventario:
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("El nombre ya existe.", color="red"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[
+                        ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
+                    ]
+                )
+                page.show_dialog(alerta)
+                return
+            
+            for nombre, datos in inventario.items():
+                if datos["ID"] == ID_val:
+                    alerta = ft.AlertDialog(
+                        title=ft.Text("ERROR", color="red"),
+                        content=ft.Text("El ID ya existe.", color="red"),
+                        alignment=ft.Alignment.CENTER,
+                        actions=[
+                            ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
+                        ]
+                    )
+                    page.show_dialog(alerta)
+                    return 
+            
+            inventario[nombre_val] = {
+                "ID": ID_val,
+                "Cantidad": cantidad_val,
+                "Precio": precio_val
+            }
+            with open("inventario.json", "w") as archivo:
+                json.dump(inventario, archivo, indent=4)
+            actualizar_tabla()    
+                
+            ID_producto.value = ""
+            nombre_producto.value = ""
+            cantidad_producto.value = ""
+            precio_producto.value = ""
+            page.update()
+                
+            page.show_dialog(ft.AlertDialog(
+                title=ft.Text("Éxito", color="green"),
+                content=ft.Text("Producto guardado correctamente.", color="green"),
+                alignment=ft.Alignment.CENTER,
+                actions=[
+                    ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
+                ]
+            ))
         except ValueError:
             alerta = ft.AlertDialog(
                 title=ft.Text("ERROR", color="red"),
@@ -172,49 +209,60 @@ def main(page: ft.Page):
             )
             page.show_dialog(alerta)
             return
-        elif producto_nombre not in inventario:
-            alerta = ft.AlertDialog(
-                title=ft.Text("ERROR", color="red"),
-                content=ft.Text("No se encontró ningún producto con el NOMBRE proporcionado.", color="red"),
-                alignment=ft.Alignment.CENTER,
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
-                ]
-            )
-            page.show_dialog(alerta)
-            return
-        elif producto_id in inventario:
-            resultado = ft.AlertDialog(
-                title=ft.Text("Resultado de la busqueda"),
-                content=ft.Column(
-                    controls=[
-                        ft.Text(f"ID: {producto_id}", color="green"),
-                        ft.Text(f"Nombre: {producto_nombre}", color="green"),
-                        ft.Text(f"Cantidad: {inventario[producto_nombre]['Cantidad']}", color="green"),
-                        ft.Text(f"Precio: {inventario[producto_nombre]['Precio']}", color="green")
+        if producto_nombre:
+            if producto_nombre not in inventario:
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("No se encontró ningún producto con el NOMBRE proporcionado.", color="red"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[
+                        ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
                     ]
-                ),
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
-                ]
-            )
-            page.show_dialog(resultado)
-            
-        for nombre, datos in inventario.items():
-            if datos["ID"] == producto_id:
+                )
+                page.show_dialog(alerta)
+                return
+            else:
+                datos = inventario[producto_nombre]
                 page.show_dialog(ft.AlertDialog(
                     title=ft.Text("Resultado de la búsqueda"),
                     content=ft.Column(
                         controls=[
                             ft.Text(f"ID: {datos['ID']}", color="green"),
-                            ft.Text(f"Nombre: {nombre}", color="green"),
+                            ft.Text(f"Nombre: {producto_nombre}", color="green"),
                             ft.Text(f"Cantidad: {datos['Cantidad']}", color="green"),
                             ft.Text(f"Precio: {datos['Precio']}", color="green")
                         ]
                     ),
+                    actions=[
+                        ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
+                    ]
+                )
+            )
+                
+        elif producto_id:
+            encontrado = False
+            for nombre, datos in inventario.items():
+                if datos["ID"] == producto_id:
+                    encontrado = True
+                    page.show_dialog(ft.AlertDialog(
+                        title=ft.Text("Resultado de la búsqueda"),
+                        content=ft.Column(
+                            controls=[
+                                ft.Text(f"ID: {datos['ID']}", color="green"),
+                                ft.Text(f"Nombre: {nombre}", color="green"),
+                                ft.Text(f"Cantidad: {datos['Cantidad']}", color="green"),
+                                ft.Text(f"Precio: {datos['Precio']}", color="green")
+                            ]
+                        ),
+                        actions=[ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())]
+                    ))
+                    return
+            if not encontrado:
+                page.show_dialog(ft.AlertDialog(
+                    title=ft.Text("Resultado de la búsqueda"),
+                    content=ft.Text("No se encontró ningún producto con el ID proporcionado.", color="red"),
                     actions=[ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())]
                 ))
-                return
     
     # funcion para eliminar los productos
     def eliminar_los_produtos():
@@ -233,34 +281,66 @@ def main(page: ft.Page):
             )
             page.show_dialog(alerta)
             return
-        elif eliminar_nombre not in inventario:
-            alerta = ft.AlertDialog(
-                title=ft.Text("ERROR", color="red"),
-                content=ft.Text("No se encontró ningún producto con el NOMBRE proporcionado.", color="red"),
-                alignment=ft.Alignment.CENTER,
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
-                ]
-            )
-            page.show_dialog(alerta)
-            return
-        else:
-            del inventario[eliminar_nombre]
-            with open("inventario.json", "w") as archivo:
-                json.dump(inventario, archivo, indent=4)
-            actualizar_tabla()
-            alerta = ft.AlertDialog(
-                title=ft.Text("Exito", color="green"),
-                content=ft.Text("Producto eliminado con exito.", color="green"),
-                alignment=ft.Alignment.CENTER,
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
-                ]
-            )  
-            id_eliminar.value = ""
-            nombre_eliminar.value = ""
-            page.update()
-            page.show_dialog(alerta)
+        elif eliminar_nombre:
+            if eliminar_nombre not in inventario:
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("No se encontró ningún producto con el NOMBRE proporcionado.", color="red"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[
+                        ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
+                    ]
+                )
+                page.show_dialog(alerta)
+                return
+            else:
+                del inventario[eliminar_nombre]
+                with open("inventario.json", "w") as archivo:
+                    json.dump(inventario, archivo, indent=4)
+                actualizar_tabla()
+                alerta = ft.AlertDialog(
+                    title=ft.Text("Exito", color="green"),
+                    content=ft.Text("Producto eliminado con exito.", color="green"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[
+                        ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
+                    ]
+                )  
+                id_eliminar.value = ""
+                nombre_eliminar.value = ""
+                page.update()
+                page.show_dialog(alerta)
+                return
+        if eliminar_id:
+            encontrar = False
+            for nombre, datos in inventario.items():
+                if datos["ID"] == eliminar_id:
+                    encontrar = True
+                    del inventario[nombre]
+                    with open("inventario.json", "w") as archivo:
+                        json.dump(inventario, archivo, indent=4)
+                    actualizar_tabla()
+                    alerta = ft.AlertDialog(
+                        title=ft.Text("Exito", color="green"),
+                        content=ft.Text("Producto eliminado con exito.", color="green"),
+                        alignment=ft.Alignment.CENTER,
+                        actions=[
+                            ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
+                        ]
+                    )
+                    page.show_dialog(alerta)
+                    return
+            if not encontrar:
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("No se encontro ningun producto con el ID proporcionado.", color="red"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[
+                        ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
+                    ]
+                )
+                page.show_dialog(alerta)
+                return
         
            
     # funcion para mostrar el formulario y guadar los productos
@@ -369,4 +449,4 @@ def main(page: ft.Page):
 
 
 if __name__ == "__main__":
-    ft.run(main)
+    ft.run(main, assets_dir="assets")

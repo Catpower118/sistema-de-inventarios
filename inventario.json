@@ -1,12 +1,27 @@
 {
     "tomate": {
-        "ID": "1",
+        "ID": "2",
         "Cantidad": 1500,
         "Precio": 25.0
     },
     "cebolla": {
-        "ID": "2",
-        "Cantidad": 150,
-        "Precio": 20.0
+        "ID": "3",
+        "Cantidad": 1500,
+        "Precio": 25.0
+    },
+    "celuar": {
+        "ID": "1",
+        "Cantidad": 1500,
+        "Precio": 200.0
+    },
+    "sandia": {
+        "ID": "4",
+        "Cantidad": 1500,
+        "Precio": 24.0
+    },
+    "papas": {
+        "ID": "5",
+        "Cantidad": 570,
+        "Precio": 22.0
     }
 }
