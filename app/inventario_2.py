@@ -6,7 +6,7 @@ import database as datos
 def main(page: ft.Page):
     page.title = "Sistema de Inventario"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.bgcolor = "black"
+    page.bgcolor = "#121248" 
     page.window.icon = "portada_sistema.ico"
     
     db = datos.DataBase(page)

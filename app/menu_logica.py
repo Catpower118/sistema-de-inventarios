@@ -1,13 +1,16 @@
 import flet as ft         
 
+# creamos la clase Menu para manejar las opciones del menu (frontend)
 class MenuLogica:
     def __init__(self, page: ft.Page, logica):
         self.page = page             
         self.logica = logica
         self.titulo = ft.Text("Bienvenido al sistema de inventario", color="green", size=30)
             
+        # Campos para la entrada de opciones del menu    
         self.opcion_entrada = ft.Text("Ingrese la opcion deseada:", color="green", size=20)    
         self.entrada = ft.TextField(label="Opcion", color="green", border_color="blue", cursor_color="white", width=200)
+        self.entrada.on_submit = self.menu_opcion
         self.boton_entrada = ft.ElevatedButton("Aceptar", bgcolor="blue", color="white", on_click=self.menu_opcion)
         
         # Campos para la entrada de productos
@@ -20,16 +23,75 @@ class MenuLogica:
         self.buscar_id = ft.TextField(label="ID del producto", color="green", border_color="blue", cursor_color="white", width=200)
         self.buscar_nombre = ft.TextField(label="Nombre del producto", color="green", border_color="blue", cursor_color="white", width=200)
     
-
+        # Campos para eliminar productos
         self.id_eliminar = ft.TextField(label="ID del producto", color="green", border_color="blue", cursor_color="white", width=200)
         self.nombre_eliminar = ft.TextField(label="Nombre del producto", color="green", border_color="blue", cursor_color="white", width=200)
         
-        self.campos = [
-            "1. Entrada de productos.",
-            "2. Ver productos.",
-            "3. Buscar productos.",
-            "4. Eliminar productos."
-        ]
+        # Lista de opciones del menu
+        self.contenedor = ft.Container(
+            content=ft.Column(
+                controls=[ft.Text("1. Entrada de productos.", color="green", size=20)],
+                spacing=10,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER
+            ),
+            bgcolor="#123446",
+            border_radius=10,
+            padding=10,
+            height=150,
+            width=300,
+            animate_scale=ft.Animation(500, ft.AnimationCurve.EASE_IN_OUT)
+        )
+        self.contenedor_2 = ft.Container(
+            content=ft.Column(
+                controls=[ft.Text("2. Ver productos.", color="green", size=20)],
+                spacing=10,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER
+            ),
+            bgcolor="#123446",
+            border_radius=10,
+            padding=10,
+            height=150,
+            width=300
+        )
+        self.contenedor_3 = ft.Container(
+            content=ft.Column(
+                controls=[ft.Text("3. Buscar productos.", color="green", size=20)],
+                spacing=10,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER
+            ),
+            bgcolor="#123446",
+            border_radius=10,
+            padding=10,
+            height=150,
+            width=300
+        )
+        self.contenedor_4 = ft.Container(
+            content=ft.Column(
+                controls=[ft.Text("4. Eliminar productos.", color="green", size=20)],
+                spacing=10,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER
+            ),
+            bgcolor="#123446",
+            border_radius=10,
+            padding=10,
+            height=150,
+            width=300
+        )
+    def filas_opciones(self):
+        return ft.Row(
+            controls=[
+                self.contenedor,
+                self.contenedor_2,
+                self.contenedor_3,
+                self.contenedor_4
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=10
+        )
         
     def fila_opcion(self):
         return ft.Row(
@@ -42,14 +104,10 @@ class MenuLogica:
         )
         
     def campos_entrada(self):
-        lista_opciones = [
-            ft.Text(campo, color="green", size=20)
-            for campo in self.campos
-        ]
         return ft.Column(
             controls=[
                 self.titulo,
-                *lista_opciones,
+                self.filas_opciones(),
                 self.fila_opcion(),
                 self.boton_entrada
             ],
@@ -75,7 +133,7 @@ class MenuLogica:
             ]
         )
         self.page.show_dialog(formulario)
-        
+        self.page.update()
    
     def ver_productos(self):
         visualizar = ft.AlertDialog(
@@ -127,11 +185,22 @@ class MenuLogica:
             ]
         )
         self.page.show_dialog(eliminar)
-        
+    
+    def campo_vacio(self):
+        alerta = ft.AlertDialog(
+            title=ft.Text("ERROR", color="red"),
+            content=ft.Text("El campo no puede estar vacio.", color="red"),
+            actions=[
+                ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+            ]
+        )
+        self.page.show_dialog(alerta)
     
     def menu_opcion(self, e):
         opcion = self.entrada.value
-        if opcion == "1":
+        if opcion == "":
+            self.campo_vacio()
+        elif opcion == "1":
             self.formulario_entrada()
         elif opcion == "2":
             self.ver_productos()

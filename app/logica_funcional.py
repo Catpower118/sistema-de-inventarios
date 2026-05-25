@@ -2,12 +2,12 @@ import flet as ft
 import json
 
 
-
 class LogicaFuncional:
     def __init__(self, page: ft.Page, db):
         self.page = page
         self.db = db
-        
+     
+     # funcion para guardar los productos en el inventario   
     def guardar_producto(self, e):
         try:
             ID_val = self.menu.id_entrada.value.strip()
@@ -76,6 +76,7 @@ class LogicaFuncional:
             self.menu.nombre_entrada.value = ""
             self.menu.cantidad_entrada.value = ""
             self.menu.precio_entrada.value = ""
+            self.menu.id_entrada.focus()
             self.page.update()
                 
             self.page.show_dialog(ft.AlertDialog(
@@ -96,9 +97,8 @@ class LogicaFuncional:
                 ]
             )
             self.page.show_dialog(alerta)
-            self._mostrar_alerta("ERROR", "Los campos de cantidad y precio deben ser numéricos.")
             
-  
+    # funcion para visualizar los productos en el inventario  
     def ver_tabla(self, e):
         self.db.actualizar_tabla()
         self.tabla = ft.AlertDialog(
@@ -111,7 +111,7 @@ class LogicaFuncional:
         self.page.show_dialog(self.tabla)
         
         
-    
+    # funcion para buscar los productos en el inventario
     def buscar_los_productos(self, e):
         self.db.actualizar_tabla()
         producto_id = self.menu.buscar_id.value.strip()
@@ -197,6 +197,7 @@ class LogicaFuncional:
                 return
                 
     
+    # funcion para eliminar productos del inventario
     def eliminar_los_productos(self, e):
         self.db.actualizar_tabla()
         eliminar_id = self.menu.id_eliminar.value.strip()
@@ -263,7 +264,10 @@ class LogicaFuncional:
                             ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
                         ]
                     )
+                    self.menu.id_eliminar.value = ""
+                    self.menu.nombre_eliminar.value = ""
                     self.page.show_dialog(alerta)
+                    self.page.update()
                     return
             if not encontrar:
                 alerta = ft.AlertDialog(
