@@ -1,8 +1,8 @@
 {
     "sandia": {
         "ID": "4",
-        "Cantidad": 1500,
-        "Precio": 24.0
+        "Cantidad": 250,
+        "Precio": 25.0
     },
     "papas": {
         "ID": "5",
@@ -13,11 +13,6 @@
         "ID": "6",
         "Cantidad": 350,
         "Precio": 10.0
-    },
-    "cebolla": {
-        "ID": "1",
-        "Cantidad": 1500,
-        "Precio": 20.0
     },
     "celular": {
         "ID": "2",
@@ -43,5 +38,10 @@
         "ID": "9",
         "Cantidad": 1500,
         "Precio": 150.0
+    },
+    "papa": {
+        "ID": "10",
+        "Cantidad": 1600,
+        "Precio": 20.0
     }
 }

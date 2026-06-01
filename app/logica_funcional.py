@@ -68,8 +68,12 @@ class LogicaFuncional:
                 "Cantidad": cantidad_val,
                 "Precio": precio_val
             }
-            with open("inventario.json", "w") as archivo:
-                json.dump(self.db.inventario, archivo, indent=4)
+            try:
+                with open("inventario.json", "w") as archivo:
+                    json.dump(self.db.inventario, archivo, indent=4)
+            except IOError as err:
+                raise Exception(f"Error al escribir en el disco: {err}")
+
             self.db.actualizar_tabla()    
                 
             self.menu.id_entrada.value = ""
@@ -231,8 +235,24 @@ class LogicaFuncional:
                 return
             else:
                 del self.db.inventario[eliminar_nombre]
-                with open("inventario.json", "w") as archivo:
-                    json.dump(self.db.inventario, archivo, indent=4)
+                try:
+                    with open("inventario.json", "w") as archivo:
+                        json.dump(self.db.inventario, archivo, indent=4)
+                except IOError:
+                    mensaje_1 = ft.AlertDialog(
+                        title=ft.Text("Error", color="red"),
+                        content=ft.Text("Error al escribir en el disco. El producto no se eliminó correctamente.", color="red"),
+                        alignment=ft.Alignment.CENTER,
+                        actions=[
+                            ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+                        ]
+                    )
+                    self.page.show_dialog(mensaje_1)
+                    self.page.update()
+                    return
+                    
+                    
+                    
                 self.db.actualizar_tabla()
                 alerta = ft.AlertDialog(
                     title=ft.Text("Exito", color="green"),
@@ -253,8 +273,22 @@ class LogicaFuncional:
                 if datos["ID"] == eliminar_id:
                     encontrar = True
                     del self.db.inventario[nombre]
-                    with open("inventario.json", "w") as archivo:
-                        json.dump(self.db.inventario, archivo, indent=4)
+                    try:
+                        with open("inventario.json", "w") as archivo:
+                            json.dump(self.db.inventario, archivo, indent=4)
+                    except IOError:
+                        mensaje = ft.AlertDialog(
+                            title=ft.Text("Error", color="red"),
+                            content=ft.Text("Error al escribir en el disco. El producto no se eliminó correctamente.", color="red"),
+                            alignment=ft.Alignment.CENTER,
+                            actions=[
+                                ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+                            ]
+                        )
+                        self.page.show_dialog(mensaje)
+                        self.page.update()
+                    
+                    
                     self.db.actualizar_tabla()
                     alerta = ft.AlertDialog(
                         title=ft.Text("Exito", color="green"),
@@ -283,4 +317,157 @@ class LogicaFuncional:
                 self.page.show_dialog(alerta)
                 self.page.update()
                 return
+            
+    def stock_tabla(self):
+        self.db.actualizar_tabla()
+        return self.db.contenedor_tabla
     
+    def actualizar_producto(self, e):
+        try:
+            self.db.actualizar_tabla()
+            actualizar_id = self.menu.modificar_id.value.strip()
+            actualizar_nombre = self.menu.modificar_nombre.value.strip()
+            actualizar_cantidad = self.menu.modificar_cantidad.value.strip()
+            actualizar_precio = self.menu.modificar_precio.value.strip()
+            
+            if not all([actualizar_id, actualizar_nombre, actualizar_cantidad, actualizar_precio]):
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("Todos los campos son obligatorios.", color="red"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())]
+                )
+                self.page.show_dialog(alerta)
+                return
+
+            if actualizar_nombre not in self.db.inventario:
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("No se encontró ningún producto con ese nombre.", color="red"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())]
+                )
+                self.page.show_dialog(alerta)
+                return
+
+            # La conversión a int y float ahora está protegida por el try-except
+            self.db.inventario[actualizar_nombre] = {
+                "ID": actualizar_id,
+                "Cantidad": int(actualizar_cantidad),
+                "Precio": float(actualizar_precio)
+            }
+
+            with open("inventario.json", "w") as archivo:
+                json.dump(self.db.inventario, archivo, indent=4)
+            
+            self.db.actualizar_tabla()
+            self.page.show_dialog(ft.AlertDialog(
+                title=ft.Text("Éxito", color="green"),
+                content=ft.Text("Producto actualizado correctamente.", color="green"),
+                actions=[ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())]
+            ))
+            
+            # Limpiar campos tras éxito
+            self.menu.modificar_id.value = ""
+            self.menu.modificar_nombre.value = ""
+            self.menu.modificar_cantidad.value = ""
+            self.menu.modificar_precio.value = ""
+
+        except ValueError:
+            self.page.show_dialog(ft.AlertDialog(
+                title=ft.Text("ERROR", color="red"),
+                content=ft.Text("Cantidad y Precio deben ser números válidos.", color="red"),
+                actions=[ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())]
+            ))
+        except Exception as ex:
+            error_3 = ft.AlertDialog(
+                title=ft.Text("Error", color="red"),
+                content=ft.Text(f"Ocurrió un error: {str(ex)}", color="red"),
+                alignment=ft.Alignment.CENTER,
+                actions=[ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())]
+            )
+            self.page.show_dialog(error_3)
+        finally:
+            self.page.update()
+            self.menu.modificar_id.value = ""
+            self.menu.modificar_nombre.value = ""
+            self.menu.modificar_cantidad.value = ""
+            self.menu.modificar_precio.value = ""
+            
+    def salida_producto(self, e):
+        try:
+            self.db.actualizar_tabla()
+            salidas_id = self.menu.salida_id.value.strip()
+            salidas_nombre = self.menu.salida_nombre.value.strip()
+            salidas_cantidad = self.menu.salida_cantidad.value.strip()
+            salidas_precio = self.menu.salida_precio.value.strip()
+            
+            if not salidas_id or not salidas_nombre or not salidas_cantidad or not salidas_precio:
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("Todos los campos son obligatorios.", color="red"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())]
+                )
+                self.page.show_dialog(alerta)
+                return
+            elif salidas_nombre not in self.db.inventario:
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("No se encontró ningún producto con ese nombre.", color="red"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())]
+                )
+                self.page.show_dialog(alerta)
+                return
+            elif int(salidas_cantidad) > self.db.inventario[salidas_nombre]["Cantidad"]:
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("No hay suficiente stock para realizar la salida.", color="red"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())]
+                )
+                self.page.show_dialog(alerta)
+                return
+            elif float(salidas_precio) > self.db.inventario[salidas_nombre]["Precio"]:
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("El precio de salida no puede ser mayor que el precio del producto.", color="red"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())]
+                )
+                self.page.show_dialog(alerta)
+                return
+            else:
+                self.db.inventario[salidas_nombre]["Cantidad"] -= int(salidas_cantidad)
+                with open("inventario.json", "w") as archivo:
+                    json.dump(self.db.inventario, archivo, indent=4)
+                self.db.actualizar_tabla()
+                alerta = ft.AlertDialog(
+                    title=ft.Text("Éxito", color="green"),
+                    content=ft.Text("Salida de producto realizada correctamente.", color="green"),
+                    actions=[ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())]
+                )
+                self.menu.salida_id.value = ""
+                self.menu.salida_nombre.value = ""
+                self.menu.salida_cantidad.value = ""
+                self.menu.salida_precio.value = ""
+                self.page.show_dialog(alerta)
+                self.page.update()
+                return
+        except Exception as ex:
+            self.page.show_dialog(ft.AlertDialog(
+                title=ft.Text("ERROR", color="red"),
+                content=ft.Text(f"Ocurrió un error: {str(ex)}", color="red"),
+                actions=[ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())]
+            ))
+            self.page.show_dialog(alerta)
+            self.page.update()
+        finally:
+            self.page.update()
+            self.menu.modificar_id.value = ""
+            self.menu.modificar_nombre.value = ""
+            self.menu.modificar_cantidad.value = ""
+            self.menu.modificar_precio.value = ""
+            
+            

@@ -14,7 +14,7 @@ def main(page: ft.Page):
     menu_interfaz = menus.MenuLogica(page, logica)
 
     logica.menu = menu_interfaz
-    page.add(menu_interfaz.campos_entrada())
+    page.add(menu_interfaz.pestanas_division())
 
 
 if __name__ == "__main__":

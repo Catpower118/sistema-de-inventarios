@@ -27,6 +27,13 @@ class MenuLogica:
         self.id_eliminar = ft.TextField(label="ID del producto", color="green", border_color="blue", cursor_color="white", width=200)
         self.nombre_eliminar = ft.TextField(label="Nombre del producto", color="green", border_color="blue", cursor_color="white", width=200)
         
+        # campos para la edición de productos
+        self.modificar_id = ft.TextField(label="ID del producto", color="green", border_color="blue", cursor_color="white", width=200)
+        self.modificar_nombre = ft.TextField(label="Nombre del producto", color="green", border_color="blue", cursor_color="white", width=200)
+        self.modificar_cantidad = ft.TextField(label="Cantidad del producto", color="green", border_color="blue", cursor_color="white", width=200)
+        self.modificar_precio = ft.TextField(label="Precio del producto", color="green", border_color="blue", cursor_color="white", width=200)
+        
+        
         # Lista de opciones del menu
         self.contenedor = ft.Container(
             content=ft.Column(
@@ -81,6 +88,19 @@ class MenuLogica:
             height=150,
             width=300
         )
+        # boton para aceptar la opción de edición
+        self.boton_entrada_edicion = ft.Button("Aceptar", bgcolor="blue", color="white", on_click=self.menu_edicion)
+        self.texto_entrada = ft.Text("Ingrese una opcion valida", color="green", size=20)
+        self.entrada_edicion = ft.TextField(label="Opcion", color="green", border_color="blue", cursor_color="white", width=200)
+        self.entrada_edicion.on_submit = self.menu_edicion
+        
+        # campos para la salida del producto
+        self.salida_id = ft.TextField(label="ID del producto", color="green", border_color="blue", cursor_color="white", width=200)
+        self.salida_nombre = ft.TextField(label="Nombre del producto", color="green", border_color="blue", cursor_color="white", width=200)
+        self.salida_cantidad = ft.TextField(label="Cantidad del producto", color="green", border_color="blue", cursor_color="white", width=200)
+        self.salida_precio = ft.TextField(label="Precio del producto", color="green", border_color="blue", cursor_color="white", width=200)
+    
+    # funcion para las opciones del menu principal
     def filas_opciones(self):
         return ft.Row(
             controls=[
@@ -92,7 +112,8 @@ class MenuLogica:
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=10
         )
-        
+    
+    # funcion para la fila de entrada de opciones del menu
     def fila_opcion(self):
         return ft.Row(
             controls=[
@@ -102,7 +123,8 @@ class MenuLogica:
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=10
         )
-        
+    
+    # funcion para mostrar el contenido de cada opción del menu
     def campos_entrada(self):
         return ft.Column(
             controls=[
@@ -114,7 +136,8 @@ class MenuLogica:
             spacing=10,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
         )
-
+    
+    # funcion para guadar los productos
     def formulario_entrada(self):
         formulario = ft.AlertDialog(
             title=ft.Text("Entrada de productos", color="blue"),
@@ -134,7 +157,8 @@ class MenuLogica:
         )
         self.page.show_dialog(formulario)
         self.page.update()
-   
+    
+    # funcion para mostrar los productos en el inventario
     def ver_productos(self):
         visualizar = ft.AlertDialog(
             title=ft.Text("productos en el inventario"),
@@ -168,7 +192,7 @@ class MenuLogica:
         )
         self.page.show_dialog(buscar)
         
-    
+    # funcion para eliminar productos del inventario
     def eliminar_producto(self):
         eliminar = ft.AlertDialog(
             title=ft.Text("Eliminar producto"),
@@ -186,6 +210,7 @@ class MenuLogica:
         )
         self.page.show_dialog(eliminar)
     
+    # funcion para validar si el campo de entrada esta vacio
     def campo_vacio(self):
         alerta = ft.AlertDialog(
             title=ft.Text("ERROR", color="red"),
@@ -196,27 +221,215 @@ class MenuLogica:
         )
         self.page.show_dialog(alerta)
     
+    #funcion principal para manejar las opciones del menu
     def menu_opcion(self, e):
-        opcion = self.entrada.value
-        if opcion == "":
-            self.campo_vacio()
-        elif opcion == "1":
-            self.formulario_entrada()
-        elif opcion == "2":
-            self.ver_productos()
-        elif opcion == "3":
-            self.buscar_productos()
-        elif opcion == "4":
-            self.eliminar_producto()
-        else:
-            alerta = ft.AlertDialog(
+        try:
+            opcion = self.entrada.value
+            if opcion == "":
+                self.campo_vacio()
+            elif opcion == "1":
+                self.formulario_entrada()
+            elif opcion == "2":
+                self.ver_productos()
+            elif opcion == "3":
+                self.buscar_productos()
+            elif opcion == "4":
+                self.eliminar_producto()
+            else:
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("Opcion no valida. por favor, ingrese valores validos", color="red"),
+                    actions=[
+                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+                    ]
+                )
+                self.page.show_dialog(alerta)
+        except Exception as ex:
+            error_1 = ft.AlertDialog(
                 title=ft.Text("ERROR", color="red"),
-                content=ft.Text("Opcion no valida. por favor, ingrese valores validos", color="red"),
+                content=ft.Text(f"Ocurrio un error: {str(ex)}", color="red"),
                 actions=[
                     ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
                 ]
             )
-            self.page.show_dialog(alerta)
-        self.entrada.value = ""
+            self.page.show_dialog(error_1)
+        finally:
+            self.entrada.value = ""
+            self.page.update()
+     
+     # funcion para mostrar las opciones de edición   
+    def opcion_edicion(self):
+        contenedor_1 = ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.Text("1. Entradas del producto", color="green", size=20)
+                ],
+                spacing=10,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER
+            ),
+            bgcolor="#123446",
+            border_radius=10,
+            padding=10,
+            height=150,
+            width=300
+        )
+        contenedor_2 =  ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.Text("2. Salidas de productos", color="green", size=20)
+                ],
+                spacing=10,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER
+            ),
+            bgcolor="#123446",
+            border_radius=10,
+            padding=10,
+            height=150,
+            width=300
+        )
+        return ft.Row(
+            controls=[
+                contenedor_1,
+                contenedor_2
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=10
+        )
+    
+    # funcion para la fila de entrada de opciones del menu
+    def entradas_edicion(self):
+        return ft.Row(
+            controls=[
+                self.texto_entrada,
+                self.entrada_edicion
+            ],
+            spacing=10,
+            alignment=ft.MainAxisAlignment.CENTER
+        )
+    
+    # funcion para mostrar las opciones de edición
+    def campos_edicion(self):
+        return ft.Column(
+            controls=[
+                self.opcion_edicion(),
+                self.entradas_edicion(),
+                self.boton_entrada_edicion
+            ],
+            spacing=10,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        )
+    
+    # funcion para modificar productos del inventario
+    def modificar_producto(self):
+        alerta = ft.AlertDialog(
+            title=ft.Text("Entrada del producto"),
+            content=ft.Column(
+                controls=[
+                    self.modificar_id,
+                    self.modificar_nombre,
+                    self.modificar_cantidad,
+                    self.modificar_precio,
+                    ft.Button("Actualizar", on_click=self.logica.actualizar_producto)
+                ]
+            ),
+            actions=[
+                ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+            ]
+        )
+        self.page.show_dialog(alerta)
         self.page.update()
+    
+    # funcion para mostrar la salida de productos del inventario
+    def salida_producto(self):
+        alerta = ft.AlertDialog(
+            title=ft.Text("Salida del producto"),
+            content=ft.Column(
+                controls=[
+                    self.salida_id,
+                    self.salida_nombre,
+                    self.salida_cantidad,
+                    self.salida_precio,
+                    ft.Button("Confirmar salida", on_click=self.logica.salida_producto)
+                ]
+            ),
+            actions=[
+                ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+            ]
+        )
+        self.page.show_dialog(alerta)
+        self.page.update()
+    
+    # funcion principal para manejar las opciones de edición del menu    
+    def menu_edicion(self, e):
+        try:
+            opcion = self.entrada_edicion.value.strip()
+            if opcion == "":
+                self.campo_vacio()
+            elif opcion == "1":
+                self.modificar_producto()
+            elif opcion == "2":
+                self.salida_producto()
+            else:
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("Opcion no valida. por favor, ingrese valores validos", color="red"),
+                    actions=[
+                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+                    ]
+                )
+                self.page.show_dialog(alerta)
+        except Exception as ex:
+            error = ft.AlertDialog(
+                title=ft.Text("ERROR", color="red"),
+                content=ft.Text(f"Ocurrio un error: {str(ex)}", color="red"),
+                actions=[
+                    ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+                ]
+            )
+            self.page.show_dialog(error)
+        finally:
+            self.entrada_edicion.value = ""
+            self.page.update()
+        
+    # funcion para mostrar las opciones de edición del menu
+    def pestanas_division(self):
+        return  ft.SafeArea(
+            expand=True,
+            content=ft.Tabs(
+                selected_index=0,
+                length=3,
+                expand=True,
+                content=ft.Column(
+                    expand=True,
+                    controls=[
+                        ft.TabBar(
+                            tabs=[
+                                ft.Tab(label="Menu", icon=ft.Icons.SETTINGS_SYSTEM_DAYDREAM),
+                                ft.Tab(label="Edicion", icon=ft.Icons.SETTINGS),
+                                ft.Tab(label="Stock", icon=ft.Icons.SETTINGS_SUGGEST),
+                            ]
+                        ),
+                        ft.TabBarView(
+                            expand=True,
+                            controls=[
+                                ft.Container(
+                                    alignment=ft.Alignment.CENTER,
+                                    content=self.campos_entrada()
+                                ),
+                                ft.Container(
+                                    alignment=ft.Alignment.CENTER,
+                                    content=self.campos_edicion()
+                                ),
+                                ft.Container(
+                                    alignment=ft.Alignment.CENTER,
+                                    content=self.logica.stock_tabla()
+                                ),
+                            ]
+                        )
+                    ]
+                )
+            )
+        )
         
