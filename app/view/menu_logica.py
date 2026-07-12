@@ -5,11 +5,11 @@ class MenuLogica:
     def __init__(self, page: ft.Page, logica):
         self.page = page             
         self.logica = logica
-        self.titulo = ft.Text("Bienvenido al sistema de inventario", color="green", size=30)
+        self.titulo = ft.Text("Bienvenido al sistema de inventario", color="white", size=30)
             
         # Campos para la entrada de opciones del menu    
-        self.opcion_entrada = ft.Text("Ingrese la opcion deseada:", color="green", size=20)    
-        self.entrada = ft.TextField(label="Opcion", color="green", border_color="blue", cursor_color="white", width=200)
+        self.opcion_entrada = ft.Text("Ingrese la opcion deseada:", color="white", size=20)    
+        self.entrada = ft.TextField(label="Opcion", color="white", border_color="blue", cursor_color="white", width=200)
         self.entrada.on_submit = self.menu_opcion
         self.boton_entrada = ft.ElevatedButton("Aceptar", bgcolor="blue", color="white", on_click=self.menu_opcion)
         
@@ -37,7 +37,7 @@ class MenuLogica:
         # Lista de opciones del menu
         self.contenedor = ft.Container(
             content=ft.Column(
-                controls=[ft.Text("1. Entrada de productos.", color="green", size=20)],
+                controls=[ft.Text("1. Entrada de productos.", color="white", size=20)],
                 spacing=10,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 alignment=ft.MainAxisAlignment.CENTER
@@ -51,7 +51,7 @@ class MenuLogica:
         )
         self.contenedor_2 = ft.Container(
             content=ft.Column(
-                controls=[ft.Text("2. Ver productos.", color="green", size=20)],
+                controls=[ft.Text("2. Ver productos.", color="white", size=20)],
                 spacing=10,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 alignment=ft.MainAxisAlignment.CENTER
@@ -64,7 +64,7 @@ class MenuLogica:
         )
         self.contenedor_3 = ft.Container(
             content=ft.Column(
-                controls=[ft.Text("3. Buscar productos.", color="green", size=20)],
+                controls=[ft.Text("3. Buscar productos.", color="white", size=20)],
                 spacing=10,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 alignment=ft.MainAxisAlignment.CENTER
@@ -77,7 +77,7 @@ class MenuLogica:
         )
         self.contenedor_4 = ft.Container(
             content=ft.Column(
-                controls=[ft.Text("4. Eliminar productos.", color="green", size=20)],
+                controls=[ft.Text("4. Eliminar productos.", color="white", size=20)],
                 spacing=10,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 alignment=ft.MainAxisAlignment.CENTER
@@ -90,8 +90,8 @@ class MenuLogica:
         )
         # boton para aceptar la opción de edición
         self.boton_entrada_edicion = ft.Button("Aceptar", bgcolor="blue", color="white", on_click=self.menu_edicion)
-        self.texto_entrada = ft.Text("Ingrese una opcion valida", color="green", size=20)
-        self.entrada_edicion = ft.TextField(label="Opcion", color="green", border_color="blue", cursor_color="white", width=200)
+        self.texto_entrada = ft.Text("Ingrese una opcion valida", color="white", size=20)
+        self.entrada_edicion = ft.TextField(label="Opcion", color="white", border_color="blue", cursor_color="white", width=200)
         self.entrada_edicion.on_submit = self.menu_edicion
         
         # campos para la salida del producto

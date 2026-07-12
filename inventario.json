@@ -43,5 +43,15 @@
         "ID": "10",
         "Cantidad": 1600,
         "Precio": 20.0
+    },
+    "tablet": {
+        "ID": "15",
+        "Cantidad": 150,
+        "Precio": 5000.0
+    },
+    "maiz": {
+        "ID": "16",
+        "Cantidad": 1500,
+        "Precio": 25.0
     }
 }
