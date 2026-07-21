@@ -14,24 +14,21 @@ class MenuLogica:
         self.boton_entrada = ft.ElevatedButton("Aceptar", bgcolor="blue", color="white", on_click=self.menu_opcion)
         
         # Campos para la entrada de productos
-        self.id_entrada = ft.TextField(label="ID del producto", color="green", border_color="blue", cursor_color="white", width=200)
         self.nombre_entrada = ft.TextField(label="Nombre del producto", color="green", border_color="blue", cursor_color="white", width=200)
-        self.cantidad_entrada = ft.TextField(label="Cantidad del producto", color="green", border_color="blue", cursor_color="white", width=200)
         self.precio_entrada = ft.TextField(label="Precio del producto", color="green", border_color="blue", cursor_color="white", width=200)
+        self.cantidad_entrada = ft.TextField(label="Cantidad del producto", color="green", border_color="blue", cursor_color="white", width=200)
+        self.stock_entrada = ft.TextField(label="Stock del producto", color="green", border_color="blue", cursor_color="white", width=200)
         
         # Campos para la búsqueda de productos
         self.buscar_id = ft.TextField(label="ID del producto", color="green", border_color="blue", cursor_color="white", width=200)
-        self.buscar_nombre = ft.TextField(label="Nombre del producto", color="green", border_color="blue", cursor_color="white", width=200)
     
         # Campos para eliminar productos
         self.id_eliminar = ft.TextField(label="ID del producto", color="green", border_color="blue", cursor_color="white", width=200)
-        self.nombre_eliminar = ft.TextField(label="Nombre del producto", color="green", border_color="blue", cursor_color="white", width=200)
         
         # campos para la edición de productos
         self.modificar_id = ft.TextField(label="ID del producto", color="green", border_color="blue", cursor_color="white", width=200)
-        self.modificar_nombre = ft.TextField(label="Nombre del producto", color="green", border_color="blue", cursor_color="white", width=200)
+        self.tipo  = ft.TextField(label="tipo (entrada/salida).", color="green", border_color="blue", cursor_color="white", width=200)
         self.modificar_cantidad = ft.TextField(label="Cantidad del producto", color="green", border_color="blue", cursor_color="white", width=200)
-        self.modificar_precio = ft.TextField(label="Precio del producto", color="green", border_color="blue", cursor_color="white", width=200)
         
         
         # Lista de opciones del menu
@@ -47,7 +44,8 @@ class MenuLogica:
             padding=10,
             height=150,
             width=300,
-            animate_scale=ft.Animation(500, ft.AnimationCurve.EASE_IN_OUT)
+            animate_scale=ft.Animation(500, ft.AnimationCurve.EASE_IN_OUT),
+            opacity=0.8
         )
         self.contenedor_2 = ft.Container(
             content=ft.Column(
@@ -60,7 +58,8 @@ class MenuLogica:
             border_radius=10,
             padding=10,
             height=150,
-            width=300
+            width=300,
+            opacity=0.8
         )
         self.contenedor_3 = ft.Container(
             content=ft.Column(
@@ -73,7 +72,8 @@ class MenuLogica:
             border_radius=10,
             padding=10,
             height=150,
-            width=300
+            width=300,
+            opacity=0.8
         )
         self.contenedor_4 = ft.Container(
             content=ft.Column(
@@ -86,7 +86,8 @@ class MenuLogica:
             border_radius=10,
             padding=10,
             height=150,
-            width=300
+            width=300,
+            opacity=0.8
         )
         # boton para aceptar la opción de edición
         self.boton_entrada_edicion = ft.Button("Aceptar", bgcolor="blue", color="white", on_click=self.menu_edicion)
@@ -137,16 +138,16 @@ class MenuLogica:
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
         )
     
-    # funcion para guadar los productos
+    # funcion para guardar los productos
     def formulario_entrada(self):
         formulario = ft.AlertDialog(
             title=ft.Text("Entrada de productos", color="blue"),
             content=ft.Column(
                 controls=[
-                    self.id_entrada,
                     self.nombre_entrada,
-                    self.cantidad_entrada,
                     self.precio_entrada,
+                    self.cantidad_entrada,
+                    self.stock_entrada,
                     ft.Button("Guardar", on_click=self.logica.guardar_producto)
                 ],
                 spacing=10
@@ -180,9 +181,8 @@ class MenuLogica:
             title=ft.Text("Buscar producto"),
             content=ft.Column(
                 controls=[
-                    ft.Text("Ingrese el ID o nombre del producto", color="green", width=200),
+                    ft.Text("Ingrese el ID del producto", color="green", width=200),
                     self.buscar_id,
-                    self.buscar_nombre,
                     ft.Button("Buscar", on_click=self.logica.buscar_los_productos)
                 ]
             ),
@@ -198,9 +198,8 @@ class MenuLogica:
             title=ft.Text("Eliminar producto"),
             content=ft.Column(
                 controls=[
-                    ft.Text("Ingrese el nombre del producto que desea eliminar", color="green", width=200),
+                    ft.Text("Ingrese el ID del producto que desea eliminar", color="green", width=200),
                     self.id_eliminar,
-                    self.nombre_eliminar,
                     ft.Button("Eliminar", on_click=self.logica.eliminar_los_productos)
                 ]
             ),
@@ -262,7 +261,7 @@ class MenuLogica:
         contenedor_1 = ft.Container(
             content=ft.Column(
                 controls=[
-                    ft.Text("1. Entradas del producto", color="green", size=20)
+                    ft.Text("1. Registar entrada o salida del producto.", color="white", size=20)
                 ],
                 spacing=10,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -272,27 +271,12 @@ class MenuLogica:
             border_radius=10,
             padding=10,
             height=150,
-            width=300
-        )
-        contenedor_2 =  ft.Container(
-            content=ft.Column(
-                controls=[
-                    ft.Text("2. Salidas de productos", color="green", size=20)
-                ],
-                spacing=10,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                alignment=ft.MainAxisAlignment.CENTER
-            ),
-            bgcolor="#123446",
-            border_radius=10,
-            padding=10,
-            height=150,
-            width=300
+            width=500,
+            opacity=0.8
         )
         return ft.Row(
             controls=[
-                contenedor_1,
-                contenedor_2
+                contenedor_1
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=10
@@ -328,30 +312,9 @@ class MenuLogica:
             content=ft.Column(
                 controls=[
                     self.modificar_id,
-                    self.modificar_nombre,
+                    self.tipo,
                     self.modificar_cantidad,
-                    self.modificar_precio,
                     ft.Button("Actualizar", on_click=self.logica.actualizar_producto)
-                ]
-            ),
-            actions=[
-                ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-            ]
-        )
-        self.page.show_dialog(alerta)
-        self.page.update()
-    
-    # funcion para mostrar la salida de productos del inventario
-    def salida_producto(self):
-        alerta = ft.AlertDialog(
-            title=ft.Text("Salida del producto"),
-            content=ft.Column(
-                controls=[
-                    self.salida_id,
-                    self.salida_nombre,
-                    self.salida_cantidad,
-                    self.salida_precio,
-                    ft.Button("Confirmar salida", on_click=self.logica.salida_producto)
                 ]
             ),
             actions=[
@@ -369,8 +332,6 @@ class MenuLogica:
                 self.campo_vacio()
             elif opcion == "1":
                 self.modificar_producto()
-            elif opcion == "2":
-                self.salida_producto()
             else:
                 alerta = ft.AlertDialog(
                     title=ft.Text("ERROR", color="red"),

@@ -1,19 +1,17 @@
 import flet as ft
-import json
-import os
+import config.conexion
 
 class DataBase:
     def __init__(self, page: ft.Page):
         self.page = page
-        # asignamos a la variable self.inventario la funcion cargar_inventario
-        self.inventario = self.cargar_inventario()
         # declaramos la variable tabla_productos para mostrar los productos en una tabla
         self.tabla_productos = ft.DataTable(
             columns=[
                 ft.DataColumn(ft.Text("ID", color="green")),
                 ft.DataColumn(ft.Text("Nombre", color="green")),
                 ft.DataColumn(ft.Text("Cantidad", color="green")),
-                ft.DataColumn(ft.Text("Precio", color="green"))
+                ft.DataColumn(ft.Text("Precio", color="green")),
+                ft.DataColumn(ft.Text("Stock", color="green"))
             ],
             rows=[]
         )
@@ -39,26 +37,25 @@ class DataBase:
     
     # funcion para actualizar la tabla de productos
     def actualizar_tabla(self):
+        conn = config.conexion.conectar()
+        cursor = conn.cursor()
         self.tabla_productos.rows.clear()
+        cursor.execute("SELECT * FROM productos")
+        productos = cursor.fetchall()
 
-        for nombre, datos in self.inventario.items():
+        for producto in productos:
             fila = ft.DataRow(
                 cells=[
-                    ft.DataCell(ft.Text(datos["ID"], color="green")),
-                    ft.DataCell(ft.Text(nombre, color="green")),
-                    ft.DataCell(ft.Text(str(datos["Cantidad"]), color="green")),
-                    ft.DataCell(ft.Text(str(datos["Precio"]), color="green"))
+                    ft.DataCell(ft.Text(str(producto[0]), color="green")),
+                    ft.DataCell(ft.Text(producto[1], color="green")),
+                    ft.DataCell(ft.Text(str(producto[2]), color="green")),
+                    ft.DataCell(ft.Text(str(producto[3]), color="green")),
+                    ft.DataCell(ft.Text(str(producto[4]), color="green"))
                 ]
             )
             self.tabla_productos.rows.append(fila)
 
+        cursor.close()
+        conn.close()
         self.page.update()
     
-    # declaramos la funcion guardar_inventario para guardar los productos en el inventario
-    def cargar_inventario(self):
-        if not os.path.exists("inventario.json") or os.path.getsize("inventario.json") == 0:
-            return {}
-        
-        with open("inventario.json", "r") as archivo:
-            return json.load(archivo) 
-        
