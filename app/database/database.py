@@ -1,5 +1,6 @@
 import flet as ft
 import config.conexion
+from mysql.connector import Error
 
 class DataBase:
     def __init__(self, page: ft.Page):
@@ -37,25 +38,43 @@ class DataBase:
     
     # funcion para actualizar la tabla de productos
     def actualizar_tabla(self):
-        conn = config.conexion.conectar()
-        cursor = conn.cursor()
-        self.tabla_productos.rows.clear()
-        cursor.execute("SELECT * FROM productos")
-        productos = cursor.fetchall()
+        try:
+            conn = config.conexion.conectar()
+            cursor = conn.cursor()
+            self.tabla_productos.rows.clear()
+            cursor.execute("SELECT * FROM productos")
+            productos = cursor.fetchall()
 
-        for producto in productos:
-            fila = ft.DataRow(
-                cells=[
-                    ft.DataCell(ft.Text(str(producto[0]), color="green")),
-                    ft.DataCell(ft.Text(producto[1], color="green")),
-                    ft.DataCell(ft.Text(str(producto[2]), color="green")),
-                    ft.DataCell(ft.Text(str(producto[3]), color="green")),
-                    ft.DataCell(ft.Text(str(producto[4]), color="green"))
+            for producto in productos:
+                fila = ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(str(producto[0]), color="green")),
+                        ft.DataCell(ft.Text(producto[1], color="green")),
+                        ft.DataCell(ft.Text(str(producto[2]), color="green")),
+                        ft.DataCell(ft.Text(str(producto[3]), color="green")),
+                        ft.DataCell(ft.Text(str(producto[4]), color="green"))
+                    ]
+                )
+                self.tabla_productos.rows.append(fila)
+
+            cursor.close()
+            conn.close()
+            self.page.update()
+            
+        except Error as e:
+            sql_error = ft.AlertDialog(
+                title=ft.Text("ERROR SQL", color="red"),
+                content=ft.Text(f"Error de MySQL. {e}"),
+                actions=[
+                    ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
                 ]
             )
-            self.tabla_productos.rows.append(fila)
-
-        cursor.close()
-        conn.close()
-        self.page.update()
+            self.page.show_dialog(sql_error)
+            self.page.update()
+        finally:
+            if cursor is not None:
+                cursor.close()
+            if conn is not None:
+                conn.close()
+                
     

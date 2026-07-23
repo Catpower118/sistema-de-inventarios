@@ -94,12 +94,6 @@ class MenuLogica:
         self.texto_entrada = ft.Text("Ingrese una opcion valida", color="white", size=20)
         self.entrada_edicion = ft.TextField(label="Opcion", color="white", border_color="blue", cursor_color="white", width=200)
         self.entrada_edicion.on_submit = self.menu_edicion
-        
-        # campos para la salida del producto
-        self.salida_id = ft.TextField(label="ID del producto", color="green", border_color="blue", cursor_color="white", width=200)
-        self.salida_nombre = ft.TextField(label="Nombre del producto", color="green", border_color="blue", cursor_color="white", width=200)
-        self.salida_cantidad = ft.TextField(label="Cantidad del producto", color="green", border_color="blue", cursor_color="white", width=200)
-        self.salida_precio = ft.TextField(label="Precio del producto", color="green", border_color="blue", cursor_color="white", width=200)
     
     # funcion para las opciones del menu principal
     def filas_opciones(self):
@@ -376,14 +370,17 @@ class MenuLogica:
                             expand=True,
                             controls=[
                                 ft.Container(
+                                    expand=True,
                                     alignment=ft.Alignment.CENTER,
                                     content=self.campos_entrada()
                                 ),
                                 ft.Container(
+                                    expand=True,
                                     alignment=ft.Alignment.CENTER,
                                     content=self.campos_edicion()
                                 ),
                                 ft.Container(
+                                    expand=True,
                                     alignment=ft.Alignment.CENTER,
                                     content=self.logica.stock_tabla()
                                 ),

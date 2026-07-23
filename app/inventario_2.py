@@ -14,22 +14,29 @@ def cargar_ventana_principal(page: ft.Page):
     page.controls.clear()
     
     page.add(
-        ft.Container(
-            expand=True,
-            image=ft.DecorationImage(
-                src="fondo.jpg",
-                fit="cover",
-                opacity=0.6
+    ft.Stack(
+        expand=True,
+        controls=[
+            ft.Container(
+                expand=True,
+                image=ft.DecorationImage(
+                    src="fondo.jpg",
+                    fit="cover",
+                    opacity=0.6
+                )
             ),
-            content=menu_interfaz.pestanas_division()
-        )
-    )
-    page.update()
+            ft.Container(
+                expand=True,
+                bgcolor="transparent",
+                content=menu_interfaz.pestanas_division()
+            )
+        ]
+    ))
 
 def main(page: ft.Page):
     page.title = "Sistema de Inventario"
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.bgcolor = "#121248" 
+    page.padding = 0
+    page.bgcolor = "#000000"
     page.window.icon = "portada_sistema.ico"
     
     login = Login(page, lambda: cargar_ventana_principal(page))
