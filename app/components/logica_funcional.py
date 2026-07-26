@@ -126,6 +126,12 @@ class LogicaFuncional:
                 ]
             )
             self.page.show_dialog(mensaje_error)
+        finally:
+            self.menu.nombre_entrada.value = ""
+            self.menu.precio_entrada.value = ""
+            self.menu.cantidad_entrada.value = ""
+            self.menu.stock_entrada.value = ""
+            
             
             
             
@@ -144,69 +150,97 @@ class LogicaFuncional:
         
     # funcion para buscar los productos en el inventario
     def buscar_los_productos(self, e):
-        self.db.actualizar_tabla()
-        producto_id = self.menu.buscar_id.value.strip()
+        try:
+            self.db.actualizar_tabla()
+            producto_id = self.menu.buscar_id.value.strip()
         
-        if not producto_id:
+            if not producto_id:
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("Por favor, ingrese un ID para buscar.", color="red"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[
+                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+                    ]
+                )
+                self.page.show_dialog(alerta)
+                self.page.update()
+                return
+            if not producto_id.isdigit():
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("El ID debe ser un número entero.", color="red"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[
+                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+                    ]
+                )
+                self.page.show_dialog(alerta)
+                self.page.update()
+                return
+        
+            producto_id_int = int(producto_id)
+        
+            self.query.buscar_producto(producto_id_int)
+        except Exception as e:
             alerta = ft.AlertDialog(
                 title=ft.Text("ERROR", color="red"),
-                content=ft.Text("Por favor, ingrese un ID para buscar.", color="red"),
-                alignment=ft.Alignment.CENTER,
+                content=ft.Text(f"Error al buscar producto: {e}"),
                 actions=[
                     ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
                 ]
             )
             self.page.show_dialog(alerta)
             self.page.update()
-            return
-        if not producto_id.isdigit():
-            alerta = ft.AlertDialog(
-                title=ft.Text("ERROR", color="red"),
-                content=ft.Text("El ID debe ser un número entero.", color="red"),
-                alignment=ft.Alignment.CENTER,
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                ]
-            )
-            self.page.show_dialog(alerta)
-            self.page.update()
-            return
-        
-        producto_id_int = int(producto_id)
-        
-        self.query.buscar_producto(producto_id_int)
+        finally:
+            self.menu.buscar_id.value = ""
+            
                 
     
     # funcion para eliminar productos del inventario
     def eliminar_los_productos(self, e):
-        self.db.actualizar_tabla()
-        eliminar_id = self.menu.id_eliminar.value.strip()
+        try:
+            self.db.actualizar_tabla()
+            eliminar_id = self.menu.id_eliminar.value.strip()
         
-        if eliminar_id == "":
+            if eliminar_id == "":
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("Por favor, ingrese un ID para eliminar.", color="red"),
+                    alignment=ft.Alignment.CENTER,
+                    actions=[
+                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+                    ]
+                )
+                self.page.show_dialog(alerta)
+                return
+            if not eliminar_id.isdigit():
+                alerta = ft.AlertDialog(
+                    title=ft.Text("ERROR", color="red"),
+                    content=ft.Text("El ID debe ser un numero valido"),
+                    actions=[
+                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+                    ]
+                )
+                self.page.show_dialog(alerta)
+                return
+        
+            eliminar_id_int = int(eliminar_id)
+        
+            self.query.eliminar_producto(eliminar_id_int)
+            self.db.actualizar_tabla()
+        except Exception as e:
             alerta = ft.AlertDialog(
                 title=ft.Text("ERROR", color="red"),
-                content=ft.Text("Por favor, ingrese un ID para eliminar.", color="red"),
-                alignment=ft.Alignment.CENTER,
+                content=ft.Text(f"Ocurrio un error al eliminar el producto: {e}"),
                 actions=[
                     ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
                 ]
             )
             self.page.show_dialog(alerta)
-            return
-        if not eliminar_id.isdigit():
-            alerta = ft.AlertDialog(
-                title=ft.Text("ERROR", color="red"),
-                content=ft.Text("El ID debe ser un numero valido"),
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                ]
-            )
-            self.page.show_dialog(alerta)
-            return
-        
-        eliminar_id_int = int(eliminar_id)
-        
-        self.query.eliminar_producto(eliminar_id_int)
+            self.page.update()
+        finally:
+            self.menu.id_eliminar.value = ""
     
     # funcion para ver la tabla        
     def stock_tabla(self):
@@ -216,8 +250,6 @@ class LogicaFuncional:
     # funcion para actualizar producto
     def actualizar_producto(self, e):
         try:
-            self.db.actualizar_tabla()
-            
             actualizar_id = self.menu.modificar_id.value.strip()
             actualizar_tipo = self.menu.tipo.value.strip().lower()
             actualizar_cantidad = self.menu.modificar_cantidad.value.strip()
@@ -273,7 +305,7 @@ class LogicaFuncional:
                     title=ft.Text("ERROR", color="red"),
                     content=ft.Text("El ID del producto no existe.", color="red"),
                     actions=[
-                        ft.TextButton("Cerrar", lambda e: self.page.pop_dialog())
+                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
                     ]
                 )
                 self.page.show_dialog(alerta)
@@ -293,11 +325,7 @@ class LogicaFuncional:
                     return
             
             self.query.editar_producto(actualizar_id_int, actualizar_tipo, actualizar_cantidad_int)
-            self.menu.modificar_id.value = ""
-            self.menu.tipo.value = ""
-            self.menu.modificar_cantidad.value = ""
-            
-            self.page.update()
+            self.db.actualizar_tabla()
         except Exception as e:
             mesage_error = ft.AlertDialog(
                 title=ft.Text("ERROR: 4000", color="red"),
@@ -307,5 +335,8 @@ class LogicaFuncional:
                 ]
             )
             self.page.show_dialog(mesage_error)
-            self.page.update()
+        finally:
+            self.menu.modificar_id.value = ""
+            self.menu.tipo.value = ""
+            self.menu.modificar_cantidad.value = ""
             

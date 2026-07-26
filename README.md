@@ -73,6 +73,8 @@ BEGIN
     END IF;
 END$$
 
+DELIMITER ;
+
 CREATE TRIGGER trg_entrada
 AFTER INSERT ON movimientos
 FOR EACH ROW

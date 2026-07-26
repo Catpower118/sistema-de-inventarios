@@ -95,6 +95,10 @@ class Queries:
         cursor = None
         try:
             cursor = self.conn.cursor()
+            
+            sql_mov = "DELETE FROM movimientos WHERE producto_id = %s"
+            cursor.execute(sql_mov, (id_eliminar,))
+            
             sql = "DELETE FROM productos WHERE id = %s"
             values = (id_eliminar,)
         
@@ -139,14 +143,27 @@ class Queries:
         try:
             cursor = self.conn.cursor()
 
+            #if tipo == "entrada":
+             #   sql_stock = "UPDATE productos SET stock = stock + %s WHERE id = %s"
+            #else:
+              #  sql_stock = "UPDATE productos SET stock = stock - %s WHERE id = %s"
+            #cursor.execute(sql_stock, (cantidad, id_editar))
             if tipo == "entrada":
-                sql_stock = "UPDATE productos SET stock = stock + %s WHERE id = %s"
+                sql_cantidad = """
+                UPDATE productos
+                SET cantidad = cantidad + %s
+                WHERE id = %s
+                """
             else:
-                sql_stock = "UPDATE productos SET stock = stock - %s WHERE id = %s"
-            cursor.execute(sql_stock, (cantidad, id_editar))
+                sql_cantidad = """
+                UPDATE productos
+                SET cantidad = cantidad - %s
+                WHERE id = %s
+                """
+            cursor.execute(sql_cantidad, (cantidad, id_editar))
 
             sql_mov = """
-            INSERT INTO movimientos (id_producto, tipo_movimiento, cantidad) 
+            INSERT INTO movimientos (producto_id, tipo, cantidad) 
             VALUES (%s, %s, %s)"""
             cursor.execute(sql_mov, (id_editar, tipo, cantidad))
 
@@ -194,6 +211,7 @@ class Queries:
             )
             self.page.show_dialog(sql_error)
             self.page.update()
+            return False
         finally:
             if cursor is not None:
                 cursor.close()
@@ -221,6 +239,7 @@ class Queries:
             )
             self.page.show_dialog(sql_error)
             self.page.update()
+            return 0
         finally:
             if cursor is not None:
                 cursor.close()

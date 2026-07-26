@@ -10,8 +10,8 @@ class DataBase:
             columns=[
                 ft.DataColumn(ft.Text("ID", color="green")),
                 ft.DataColumn(ft.Text("Nombre", color="green")),
-                ft.DataColumn(ft.Text("Cantidad", color="green")),
-                ft.DataColumn(ft.Text("Precio", color="green")),
+                ft.DataColumn(ft.Text("precio", color="green")),
+                ft.DataColumn(ft.Text("cantidad", color="green")),
                 ft.DataColumn(ft.Text("Stock", color="green"))
             ],
             rows=[]
@@ -38,6 +38,8 @@ class DataBase:
     
     # funcion para actualizar la tabla de productos
     def actualizar_tabla(self):
+        cursor = None
+        conn = None
         try:
             conn = config.conexion.conectar()
             cursor = conn.cursor()

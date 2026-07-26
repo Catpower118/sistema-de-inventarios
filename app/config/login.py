@@ -6,6 +6,7 @@ class Login:
         self.page = page   
         self.callback_exito = callback_exito
         
+        # creamos las entradas para el conector
         self.host = ft.TextField(label="Host", width=300)
         self.user = ft.TextField(label="Usuario", width=300)
         self.password = ft.TextField(label="Contraseña", width=300, password=True, can_reveal_password=True)
