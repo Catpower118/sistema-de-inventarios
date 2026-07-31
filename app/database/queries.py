@@ -1,6 +1,8 @@
 import flet as ft         
 import config.conexion
 from mysql.connector import Error
+from utils.logger import Logger
+import traceback
 
 class Queries:
     def __init__(self,page: ft.Page):
@@ -27,9 +29,11 @@ class Queries:
             self.page.show_dialog(alerta)
             self.page.update()
         except Error as e:
+            Logger.add_to_log("error", str(e))
+            Logger.add_to_log("error", traceback.format_exc())
             sql_error = ft.AlertDialog(
                 title=ft.Text("ERROR SQL", color="red"),
-                content=ft.Text(f"Error al guardar producto. {e}"),
+                content=ft.Text("Error al guardar producto."),
                 actions=[
                     ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
                 ]
@@ -77,9 +81,11 @@ class Queries:
                 self.page.update()
             self.page.update()
         except Error as e:
+            Logger.add_to_log("error", str(e))
+            Logger.add_to_log("error", traceback.format_exc())
             sql_error = ft.AlertDialog(
                 title=ft.Text("ERROR SQL", color="red"),
-                content=ft.Text(f"Error al buscar producto. {e}"),
+                content=ft.Text("Error al buscar producto."),
                 actions=[
                     ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
                 ]
@@ -125,9 +131,11 @@ class Queries:
                 self.page.show_dialog(alerta)
             self.page.update()
         except Error as e:
+            Logger.add_to_log("error", str(e))
+            Logger.add_to_log("error", traceback.format_exc())
             sql_error = ft.AlertDialog(
                 title=ft.Text("ERROR SQL", color="red"),
-                content=ft.Text(f"Error al eliminar producto. {e}"),
+                content=ft.Text("Error al eliminar producto."),
                 actions=[
                     ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
                 ]
@@ -178,9 +186,11 @@ class Queries:
             self.page.show_dialog(alerta)
             self.page.update()
         except Error as e:
+            Logger.add_to_log("error", str(e))
+            Logger.add_to_log("error", traceback.format_exc())
             sql_error = ft.AlertDialog(
                 title=ft.Text("ERROR SQL", color="red"),
-                content=ft.Text(f"Error al editar producto. {e}"),
+                content=ft.Text("Error al editar producto."),
                 actions=[
                     ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
                 ]
@@ -202,9 +212,11 @@ class Queries:
             resultado = cursor.fetchone()
             return resultado is not None
         except Error as e:
+            Logger.add_to_log("error", str(e))
+            Logger.add_to_log("error", traceback.format_exc())
             sql_error = ft.AlertDialog(
                 title=ft.Text("ERROR SQL", color="red"),
-                content=ft.Text(f"Error al validar ID del producto. {e}"),
+                content=ft.Text("Error al validar ID del producto."),
                 actions=[
                     ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
                 ]
@@ -230,9 +242,11 @@ class Queries:
             else:
                 return None
         except Error as e:
+            Logger.add_to_log("error", str(e))
+            Logger.add_to_log("error", traceback.format_exc())
             sql_error = ft.AlertDialog(
                 title=ft.Text("ERROR SQL", color="red"),
-                content=ft.Text(f"Error al validar stock del producto. {e}"),
+                content=ft.Text("Error al validar stock del producto."),
                 actions=[
                     ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
                 ]

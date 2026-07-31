@@ -1,5 +1,6 @@
 import flet as ft         
 import database.queries as qu
+from utils.logger import Logger
 
 
 class LogicaFuncional:
@@ -116,6 +117,8 @@ class LogicaFuncional:
             
             self.query.guardar_producto(nombre_val, precio_val, cantidad_val, stock_val)
             self.db.actualizar_tabla()
+            Logger.add_to_log("info", f"se anadio un nuevo producto: {nombre_val}")
+            
             
         except Exception as e:
             mensaje_error = ft.AlertDialog(
@@ -182,6 +185,7 @@ class LogicaFuncional:
             producto_id_int = int(producto_id)
         
             self.query.buscar_producto(producto_id_int)
+            Logger.add_to_log("info", f"se hizo a busqueda del producto: {producto_id_int}")
         except Exception as e:
             alerta = ft.AlertDialog(
                 title=ft.Text("ERROR", color="red"),
@@ -229,6 +233,7 @@ class LogicaFuncional:
         
             self.query.eliminar_producto(eliminar_id_int)
             self.db.actualizar_tabla()
+            Logger.add_to_log("warn", f"se elimino del inventario el producto id: {eliminar_id_int}")
         except Exception as e:
             alerta = ft.AlertDialog(
                 title=ft.Text("ERROR", color="red"),
@@ -326,6 +331,7 @@ class LogicaFuncional:
             
             self.query.editar_producto(actualizar_id_int, actualizar_tipo, actualizar_cantidad_int)
             self.db.actualizar_tabla()
+            Logger.add_to_log("info", f"movimiento en el inventario tipo: {actualizar_tipo}, id: {actualizar_id_int}, cantidad: {actualizar_cantidad_int}")
         except Exception as e:
             mesage_error = ft.AlertDialog(
                 title=ft.Text("ERROR: 4000", color="red"),
