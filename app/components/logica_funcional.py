@@ -3,11 +3,22 @@ import database.queries as qu
 from utils.logger import Logger
 
 
+def error_dialog(page, texto):
+    alerta = ft.AlertDialog(
+        title=ft.Text("ERROR", color="red"),
+        content=ft.Text(texto, color="red"),
+        actions=[
+            ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
+        ]
+    )
+    page.show_dialog(alerta)
+
 class LogicaFuncional:
     def __init__(self, page: ft.Page, db):
         self.page = page
         self.db = db
         self.query = qu.Queries(page)
+        
      
      # funcion para guardar los productos en el inventario   
     def guardar_producto(self, e):
@@ -18,108 +29,44 @@ class LogicaFuncional:
             stock_val_str = self.menu.stock_entrada.value.strip()
 
             if not nombre_val or not cantidad_val_str or not precio_val_str or not stock_val_str:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("Todos los campos son obligatorios. Por favor, complete todos los campos.", color="red"),
-                    alignment=ft.Alignment.CENTER,
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "Todos los campos son obligatorios, intente otra vez.")
                 return
 
             if not nombre_val.replace(" ", "").isalpha():
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("El nombre del producto no puede contener números o caracteres especiales.", color="red"),
-                    alignment=ft.Alignment.CENTER,
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "El nombre del producto solo debe contener letras y espacios.")
                 return
             if not cantidad_val_str.isdigit() or not stock_val_str.isdigit():
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("La cantidad y el stock deben ser números enteros.", color="red"),
-                    alignment=ft.Alignment.CENTER,
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "La cantidad y el stock deben ser números enteros.")
                 return
             
             if precio_val_str.count('.') > 1:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("El precio no puede contener más de un punto decimal.", color="red"),
-                    alignment=ft.Alignment.CENTER,
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "El precio no puede contener más de un punto decimal.")
                 return
+            
             try:
                 precio_val = float(precio_val_str)
                 cantidad_val = int(cantidad_val_str)
                 stock_val = int(stock_val_str)
             except ValueError:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("La cantidad, el stock y el precio deben ser números válidos.", color="red"),
-                    alignment=ft.Alignment.CENTER,
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "La cantidad, el stock y el precio deben ser números válidos.")
                 return
             
             if cantidad_val <= 0:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("La cantidad debe ser un número positivo.", color="red"),
-                    alignment=ft.Alignment.CENTER,
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "La cantidad debe ser un número positivo.")
                 return
             
             if stock_val <= 0:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("El stock debe ser un número positivo.", color="red"),
-                    alignment=ft.Alignment.CENTER,
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "El stock debe ser un número positivo.")
                 return
             
             if precio_val <= 0:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("El precio debe ser un número positivo.", color="red"),
-                    alignment=ft.Alignment.CENTER,
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "El precio debe ser un número positivo.")
                 return
             
             self.query.guardar_producto(nombre_val, precio_val, cantidad_val, stock_val)
             self.db.actualizar_tabla()
             Logger.add_to_log("info", f"se anadio un nuevo producto: {nombre_val}")
-            
-            
+               
         except Exception as e:
             mensaje_error = ft.AlertDialog(
                 title=ft.Text("ERROR"),
@@ -158,28 +105,10 @@ class LogicaFuncional:
             producto_id = self.menu.buscar_id.value.strip()
         
             if not producto_id:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("Por favor, ingrese un ID para buscar.", color="red"),
-                    alignment=ft.Alignment.CENTER,
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
-                self.page.update()
+                error_dialog(self.page, "Por favor, ingrese un ID para buscar.")
                 return
             if not producto_id.isdigit():
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("El ID debe ser un número entero.", color="red"),
-                    alignment=ft.Alignment.CENTER,
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
-                self.page.update()
+                error_dialog(self.page, "El ID debe ser un número válido.")
                 return
         
             producto_id_int = int(producto_id)
@@ -208,25 +137,10 @@ class LogicaFuncional:
             eliminar_id = self.menu.id_eliminar.value.strip()
         
             if eliminar_id == "":
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("Por favor, ingrese un ID para eliminar.", color="red"),
-                    alignment=ft.Alignment.CENTER,
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "Por favor, ingrese un ID para eliminar.")
                 return
             if not eliminar_id.isdigit():
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("El ID debe ser un numero valido"),
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "El ID debe ser un número válido.")
                 return
         
             eliminar_id_int = int(eliminar_id)
@@ -260,73 +174,31 @@ class LogicaFuncional:
             actualizar_cantidad = self.menu.modificar_cantidad.value.strip()
             
             if not actualizar_id or not actualizar_tipo or not actualizar_cantidad:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("Todos los campos son obligatorios.", color="red"),
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "Todos los campos son obligatorios, intente otra vez.")
                 return
             try:
                 actualizar_id_int = int(actualizar_id)
                 actualizar_cantidad_int = int(actualizar_cantidad)
             except ValueError:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("Los campos ID y cantidad deben ser numeros enteros.", color="red"),
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                ) 
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "El ID y la cantidad deben ser números válidos.")
                 return
 
             if actualizar_tipo not in ["entrada", "salida"]:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("el tipo de movimiento debe ser 'entrada' o 'salida'."),
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "El tipo de movimiento debe ser 'entrada' o 'salida'.")
                 return
             
             if actualizar_id_int <= 0:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("El ID del producto debe ser un valor positivo.", color="red"),
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, "El ID debe ser un número positivo.")
                 return
             
             if not self.query.validar_id_existe(actualizar_id_int):
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text("El ID del producto no existe.", color="red"),
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                error_dialog(self.page, f"El ID {actualizar_id_int} no existe en la base de datos.")
                 return
             
             if actualizar_tipo == "salida":
                 stock_actual = self.query.validar_stock_actual(actualizar_id_int)
                 if actualizar_cantidad_int > stock_actual:
-                    alerta = ft.AlertDialog(
-                        title=ft.Text("ERROR", color="red"),
-                        content=ft.Text(f"No hay suficiente stock. stock actual {stock_actual}."),
-                        actions=[
-                            ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                        ]
-                    )
-                    self.page.show_dialog(alerta)
+                    error_dialog(self.page, f"No hay suficiente stock para realizar la salida. Stock actual: {stock_actual}.")
                     return
             
             self.query.editar_producto(actualizar_id_int, actualizar_tipo, actualizar_cantidad_int)

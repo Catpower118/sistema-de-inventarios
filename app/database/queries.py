@@ -4,6 +4,26 @@ from mysql.connector import Error
 from utils.logger import Logger
 import traceback
 
+def error_sql(page, texto):
+    alerta = ft.AlertDialog(
+        title=ft.Text("ERROR SQL", color="red"),
+        content=ft.Text(texto, color="red"),
+        actions=[
+            ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
+        ]
+    )
+    page.show_dialog(alerta)
+
+def dialog_exit(page, texto, texto_2):
+    alerta = ft.AlertDialog(
+        title=ft.Text(texto, color="green"),
+        content=ft.Text(texto_2, color="green"),
+        actions=[
+            ft.TextButton("Cerrar", on_click=lambda e: page.pop_dialog())
+        ]
+    )
+    page.show_dialog(alerta)
+
 class Queries:
     def __init__(self,page: ft.Page):
         self.page = page
@@ -19,27 +39,11 @@ class Queries:
         
             cursor.execute(sql, values)
             self.conn.commit()
-            alerta = ft.AlertDialog(
-                title=ft.Text("Producto Guardado"),
-                content=ft.Text(f"El producto {nombre} ha sido guardado exitosamente."),
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                ]
-            )
-            self.page.show_dialog(alerta)
-            self.page.update()
+            dialog_exit(self.page, "Producto Guardado", f"El producto {nombre} ha sido guardado exitosamente.")
         except Error as e:
             Logger.add_to_log("error", str(e))
             Logger.add_to_log("error", traceback.format_exc())
-            sql_error = ft.AlertDialog(
-                title=ft.Text("ERROR SQL", color="red"),
-                content=ft.Text("Error al guardar producto."),
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                ]
-            )
-            self.page.show_dialog(sql_error)
-            self.page.update()
+            error_sql(self.page, "Error al guardar producto.")
         finally:
             if cursor is not None:
                 cursor.close()
@@ -70,28 +74,11 @@ class Queries:
                 self.page.show_dialog(visualizar)
                 self.page.update()
             else:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("Producto No Encontrado"),
-                    content=ft.Text("El producto no fue encontrado."),
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
-                self.page.update()
-            self.page.update()
+                dialog_exit(self.page, "Producto No Encontrado", f"No se encontró ningún producto con ID {id_buscar}.")
         except Error as e:
             Logger.add_to_log("error", str(e))
             Logger.add_to_log("error", traceback.format_exc())
-            sql_error = ft.AlertDialog(
-                title=ft.Text("ERROR SQL", color="red"),
-                content=ft.Text("Error al buscar producto."),
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                ]
-            )
-            self.page.show_dialog(sql_error)
-            self.page.update()
+            error_sql(self.page, "Error al buscar producto.")
         finally:
             if cursor is not None:
                 cursor.close()
@@ -112,36 +99,13 @@ class Queries:
             self.conn.commit()
         
             if cursor.rowcount > 0:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("Producto Eliminado"),
-                    content=ft.Text(f"El producto con ID {id_eliminar} ha sido eliminado exitosamente."),
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
+                dialog_exit(self.page, "Producto Eliminado", f"El producto con ID {id_eliminar} ha sido eliminado exitosamente.")
             else:
-                alerta = ft.AlertDialog(
-                    title=ft.Text("ERROR", color="red"),
-                    content=ft.Text(f"El ID {id_eliminar} no existe."),
-                    actions=[
-                        ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                    ]
-                )
-                self.page.show_dialog(alerta)
-            self.page.update()
+                dialog_exit(self.page, "Producto No Encontrado", f"No se encontró ningún producto con ID {id_eliminar}.")
         except Error as e:
             Logger.add_to_log("error", str(e))
             Logger.add_to_log("error", traceback.format_exc())
-            sql_error = ft.AlertDialog(
-                title=ft.Text("ERROR SQL", color="red"),
-                content=ft.Text("Error al eliminar producto."),
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                ]
-            )
-            self.page.show_dialog(sql_error)
-            self.page.update()
+            error_sql(self.page, "Error al eliminar producto.")
         finally:
             if cursor is not None:
                 cursor.close()
@@ -176,27 +140,11 @@ class Queries:
             cursor.execute(sql_mov, (id_editar, tipo, cantidad))
 
             self.conn.commit()
-            alerta = ft.AlertDialog(
-                title=ft.Text("Movimiento Registrado"),
-                content=ft.Text(f"El movimiento {tipo} ha sido registrado exitosamente."),
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                ]
-            )
-            self.page.show_dialog(alerta)
-            self.page.update()
+            dialog_exit(self.page, "Producto Editado", f"El producto con ID {id_editar} ha sido editado exitosamente.")
         except Error as e:
             Logger.add_to_log("error", str(e))
             Logger.add_to_log("error", traceback.format_exc())
-            sql_error = ft.AlertDialog(
-                title=ft.Text("ERROR SQL", color="red"),
-                content=ft.Text("Error al editar producto."),
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                ]
-            )
-            self.page.show_dialog(sql_error)
-            self.page.update()
+            error_sql(self.page, "Error al editar producto.")
         finally:
             if cursor is not None:
                 cursor.close()
@@ -214,15 +162,7 @@ class Queries:
         except Error as e:
             Logger.add_to_log("error", str(e))
             Logger.add_to_log("error", traceback.format_exc())
-            sql_error = ft.AlertDialog(
-                title=ft.Text("ERROR SQL", color="red"),
-                content=ft.Text("Error al validar ID del producto."),
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                ]
-            )
-            self.page.show_dialog(sql_error)
-            self.page.update()
+            error_sql(self.page, "Error al validar ID del producto.")
             return False
         finally:
             if cursor is not None:
@@ -244,15 +184,7 @@ class Queries:
         except Error as e:
             Logger.add_to_log("error", str(e))
             Logger.add_to_log("error", traceback.format_exc())
-            sql_error = ft.AlertDialog(
-                title=ft.Text("ERROR SQL", color="red"),
-                content=ft.Text("Error al validar stock del producto."),
-                actions=[
-                    ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
-                ]
-            )
-            self.page.show_dialog(sql_error)
-            self.page.update()
+            error_sql(self.page, "Error al validar stock del producto.")
             return 0
         finally:
             if cursor is not None:

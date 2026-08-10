@@ -1,9 +1,11 @@
-import flet as ft         
+import flet as ft      
+from utils.generar_excel import GenerarExcel   
 
 # creamos la clase Menu para manejar las opciones del menu (frontend)
 class MenuLogica:
     def __init__(self, page: ft.Page, logica):
         self.page = page             
+        self.generar_excel = GenerarExcel(page)
         self.logica = logica
         self.titulo = ft.Text("Bienvenido al sistema de inventario", color="white", size=30)
             
@@ -268,9 +270,26 @@ class MenuLogica:
             width=500,
             opacity=0.8
         )
+        contenedor_2 = ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.Text("2. Generar reporte excel." , color="white", size=20)
+                ],
+                spacing=10,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER
+            ),
+            bgcolor="#123446",
+            border_radius=10,
+            padding=10,
+            height=150,
+            width=400,
+            opacity=0.8
+        )
         return ft.Row(
             controls=[
-                contenedor_1
+                contenedor_1,
+                contenedor_2
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=10
@@ -317,7 +336,23 @@ class MenuLogica:
         )
         self.page.show_dialog(alerta)
         self.page.update()
-    
+        
+    def generar_reporte_excel(self):
+        alerta = ft.AlertDialog(
+            title=ft.Text("Generar reporte excel"),
+            content=ft.Column(
+                controls=[
+                    ft.Text("Desea generar un reporte excel del log del sistema?", color="green", width=200),
+                    ft.Button("Generar", on_click=lambda e: self.generar_excel.generar_excel())
+                ]
+            ),
+            actions=[
+                ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+            ]
+        )
+        self.page.show_dialog(alerta)
+        self.page.update()
+        
     # funcion principal para manejar las opciones de edición del menu    
     def menu_edicion(self, e):
         try:
@@ -326,6 +361,8 @@ class MenuLogica:
                 self.campo_vacio()
             elif opcion == "1":
                 self.modificar_producto()
+            elif opcion == "2":
+                self.generar_reporte_excel()
             else:
                 alerta = ft.AlertDialog(
                     title=ft.Text("ERROR", color="red"),
