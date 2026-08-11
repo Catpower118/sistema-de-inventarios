@@ -18,6 +18,7 @@ Aplicación de gestión de inventarios desarrollada con **Python**, **Flet** y *
 - MySQL 8.0+
 - [Flet](https://flet.dev/)
 - mysql-connector-python
+- openpyxl
 
 ## Instalación
 
