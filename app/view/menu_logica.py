@@ -51,7 +51,7 @@ class MenuLogica:
         )
         self.contenedor_2 = ft.Container(
             content=ft.Column(
-                controls=[ft.Text("2. Ver productos.", color="white", size=20)],
+                controls=[ft.Text("2. Ver tabla movimiento.", color="white", size=20)],
                 spacing=10,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 alignment=ft.MainAxisAlignment.CENTER
@@ -158,11 +158,11 @@ class MenuLogica:
     # funcion para mostrar los productos en el inventario
     def ver_productos(self):
         visualizar = ft.AlertDialog(
-            title=ft.Text("productos en el inventario"),
+            title=ft.Text("Tabla movimientos de productos"),
             content=ft.Column(
                 controls=[
-                    ft.Text("Desea ver los productos en el inventario?", color="green", width=200),
-                    ft.Button("Visualizar", on_click=self.logica.ver_tabla)
+                    ft.Text("Desea ver los movimientos de productos?", color="green", width=200),
+                    ft.Button("Visualizar", on_click=self.logica.ver_tabla_movimientos)
                 ]
             ),
             actions=[

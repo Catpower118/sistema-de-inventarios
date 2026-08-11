@@ -97,6 +97,16 @@ class LogicaFuncional:
         )
         self.page.show_dialog(self.tabla)
         
+    def ver_tabla_movimientos(self, e):
+        self.db.actualizar_tabla_movimientos()
+        self.tabla_movimientos = ft.AlertDialog(
+            title=ft.Text("Movimientos en el inventario"),
+            content=self.db.contenedor_tabla_movimientos,
+            actions=[
+                ft.TextButton("Cerrar", on_click=lambda e: self.page.pop_dialog())
+            ]
+        )
+        self.page.show_dialog(self.tabla_movimientos)
         
     # funcion para buscar los productos en el inventario
     def buscar_los_productos(self, e):
